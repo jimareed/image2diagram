@@ -1,96 +1,94 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
-	"image/color"
-	"image/png"
+	"io/ioutil"
 	"log"
+	"mime"
+	"net/http"
 	"os"
+	"path/filepath"
 )
 
-type ImageSet interface {
-	Set(x, y int, c color.Color)
-}
+const maxUploadSize = 2 * 1024 * 1024 // 2 mb
+const uploadPath = "./tmp"
 
 func main() {
-	file, err := os.Open("./images/selfcss.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
+	http.HandleFunc("/upload", uploadFileHandler())
 
-	img, err := png.Decode(file)
-	if err != nil {
-		log.Fatal(os.Stderr, "%s: %v\n", "./images/selfcss.png", err)
-	}
+	fs := http.FileServer(http.Dir(uploadPath))
+	http.Handle("/files/", http.StripPrefix("/files", fs))
 
-	b := img.Bounds()
+	log.Print("Server started on localhost:8080, use /upload for uploading files and /files/{fileName} for downloading")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
 
-	imgSet := img.(ImageSet)
-	for y := b.Min.Y; y < b.Max.Y; y++ {
-		for x := b.Min.X; x < b.Max.X; x++ {
-			oldPixel := img.At(x, y)
-			r, g, b, a := oldPixel.RGBA()
-			fmt.Println(r, g, b, a)
-			pixel := color.RGBA{uint8(g), uint8(g), uint8(g), uint8(a)}
-			imgSet.Set(x, y, pixel)
+func uploadFileHandler() http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// validate file size
+		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
+		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
+			renderError(w, "FILE_TOO_BIG", http.StatusBadRequest)
+			return
 		}
-	}
 
-	fd, err := os.Create("./images/gray.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = png.Encode(fd, img)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = fd.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	file, err = os.Open("./images/selfcss.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	img, err = png.Decode(file)
-	if err != nil {
-		log.Fatal(os.Stderr, "%s: %v\n", "./images/selfcss.png", err)
-	}
-
-	b = img.Bounds()
-
-	imgSet = img.(ImageSet)
-	for y := b.Min.Y; y < b.Max.Y; y++ {
-		for x := b.Min.X; x < b.Max.X; x++ {
-			oldPixel := img.At(x, y)
-			r, g, b, a := oldPixel.RGBA()
-			//fmt.Println(r, g, b, a)
-			r = 65535 - r
-			g = 65535 - g
-			b = 65535 - b
-			pixel := color.RGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
-			imgSet.Set(x, y, pixel)
+		// parse and validate file and post parameters
+		fileType := r.PostFormValue("type")
+		file, _, err := r.FormFile("uploadFile")
+		if err != nil {
+			renderError(w, "INVALID_FILE", http.StatusBadRequest)
+			return
 		}
-	}
+		defer file.Close()
+		fileBytes, err := ioutil.ReadAll(file)
+		if err != nil {
+			renderError(w, "INVALID_FILE", http.StatusBadRequest)
+			return
+		}
 
-	fd, err = os.Create("./images/inv.png")
-	if err != nil {
-		log.Fatal(err)
-	}
+		// check file type, detectcontenttype only needs the first 512 bytes
+		filetype := http.DetectContentType(fileBytes)
+		switch filetype {
+		case "image/jpeg", "image/jpg":
+		case "image/gif", "image/png":
+		case "application/pdf":
+			break
+		default:
+			renderError(w, "INVALID_FILE_TYPE", http.StatusBadRequest)
+			return
+		}
+		fileName := randToken(12)
+		fileEndings, err := mime.ExtensionsByType(fileType)
+		if err != nil {
+			renderError(w, "CANT_READ_FILE_TYPE", http.StatusInternalServerError)
+			return
+		}
+		newPath := filepath.Join(uploadPath, fileName+fileEndings[0])
+		fmt.Printf("FileType: %s, File: %s\n", fileType, newPath)
 
-	err = png.Encode(fd, img)
-	if err != nil {
-		log.Fatal(err)
-	}
+		// write file
+		newFile, err := os.Create(newPath)
+		if err != nil {
+			renderError(w, "CANT_WRITE_FILE", http.StatusInternalServerError)
+			return
+		}
+		defer newFile.Close() // idempotent, okay to call twice
+		if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
+			renderError(w, "CANT_WRITE_FILE", http.StatusInternalServerError)
+			return
+		}
+		w.Write([]byte("SUCCESS"))
+	})
+}
 
-	err = fd.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
+func renderError(w http.ResponseWriter, message string, statusCode int) {
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte(message))
+}
+
+func randToken(len int) string {
+	b := make([]byte, len)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
 }
