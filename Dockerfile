@@ -4,6 +4,7 @@ RUN apk --update add git
 WORKDIR /go/src/github.com/jimareed/images/
 COPY . /go/src/github.com/jimareed/images/
 RUN rm -f goapp
+RUN go get github.com/gorilla/mux
 RUN go build -o ./goapp ./src
 
 FROM alpine:3.6
