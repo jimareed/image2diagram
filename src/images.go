@@ -69,7 +69,11 @@ func createImages(w http.ResponseWriter, r *http.Request) {
 		renderError(w, "CANT_WRITE_FILE", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("SUCCESS"))
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+
+	io.WriteString(w, "{\"id\": \""+fileName+"\"}\n")
 }
 
 func renderError(w http.ResponseWriter, message string, statusCode int) {
@@ -84,6 +88,7 @@ func randToken(len int) string {
 }
 
 func getImages(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
 	io.WriteString(w, "{}\n")
 }
 
@@ -91,5 +96,6 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
+	w.Header().Add("Content-Type", "application/json")
 	io.WriteString(w, "{\"id\": \""+id+"\"}\n")
 }
