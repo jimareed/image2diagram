@@ -3,11 +3,14 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/gorilla/mux"
 )
 
 const maxUploadSize = 2 * 1024 * 1024 // 2 mb
@@ -78,4 +81,15 @@ func randToken(len int) string {
 	b := make([]byte, len)
 	rand.Read(b)
 	return fmt.Sprintf("%x", b)
+}
+
+func getImages(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "{}\n")
+}
+
+func getImage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	io.WriteString(w, "{\"id\": \""+id+"\"}\n")
 }
