@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"image/png"
 	"log"
 	"os"
 )
 
-func image2Diagram(imageFileName string) string {
+func image2BlackWhiteImage(imageFileName string) BlackWhiteImage {
 	file, err := os.Open(imageFileName)
 	if err != nil {
 		log.Fatal(err)
@@ -22,10 +21,9 @@ func image2Diagram(imageFileName string) string {
 
 	b := img.Bounds()
 
-	type point struct {
-		x, y int
-	}
-	points := []point{}
+	bwImage := BlackWhiteImage{}
+	bwImage.width = b.Max.X
+	bwImage.height = b.Max.Y
 
 	for y := b.Min.Y; y < b.Max.Y; y++ {
 		for x := b.Min.X; x < b.Max.X; x++ {
@@ -38,24 +36,10 @@ func image2Diagram(imageFileName string) string {
 				level = 0
 			}
 			if level == 0 {
-				points = append(points, point{x, y})
+				bwImage.points = append(bwImage.points, Point{x, y})
 			}
 		}
 	}
 
-	blocks := ""
-	if len(points) > 0 {
-		blocks = fmt.Sprintf("{\"x\": %d, \"y\": %d}", points[0].x, points[0].y)
-	}
-
-	diagram := fmt.Sprintf(
-		"{"+
-			"\"width\": %d,"+
-			"\"height\": %d,"+
-			"\"blocks\": [%s],"+
-			"\"connectors\": []"+
-			"}\n",
-		b.Max.X, b.Max.Y, blocks)
-
-	return diagram
+	return bwImage
 }

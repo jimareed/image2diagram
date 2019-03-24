@@ -15,6 +15,12 @@ type BlackWhiteImage struct {
 func blackWhiteImage2Diagram(bwImage BlackWhiteImage) Diagram {
 
 	diagram := Diagram{}
+	diagram.width = bwImage.width
+	diagram.height = bwImage.height
+
+	if len(bwImage.points) > 0 {
+		diagram.blocks = append(diagram.blocks, Block{bwImage.points[0].x, bwImage.points[0].y})
+	}
 
 	return diagram
 }

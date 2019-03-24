@@ -4,10 +4,12 @@ import (
 	"fmt"
 )
 
+// Block contains the x,y coordinates of the start of the block
 type Block struct {
 	x, y int
 }
 
+// Diagram contains a list of blocks (structure used by block-diagram-editor)
 type Diagram struct {
 	width  int
 	height int

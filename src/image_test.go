@@ -4,13 +4,17 @@ import (
 	"testing"
 )
 
-func TestBlock1(t *testing.T) {
-	diagram := Diagram{}
-	diagram.width = 0
-	diagram.height = 0
+func TestConvertBlock1(t *testing.T) {
 
-	if len(diagram.blocks) != 0 {
-		t.Log("Failed to create a diagram with empty blocks")
+	bwImage := image2BlackWhiteImage("../images/blocks-1.png")
+
+	if bwImage.points[0].x != 316 || bwImage.points[0].y != 248 {
+		t.Log("Failed to convert single block image, first point is invalid")
+		t.Fail()
+	}
+
+	if bwImage.width != 1416 || bwImage.height != 1096 {
+		t.Log("Failed to convert single block image, image width/height invalid")
 		t.Fail()
 	}
 }
