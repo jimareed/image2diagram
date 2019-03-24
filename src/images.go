@@ -5,16 +5,19 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
 
 const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 const uploadPath = "./tmp"
+const tokenLength = 12
 
 func createImages(w http.ResponseWriter, r *http.Request) {
 	// validate file size
@@ -49,7 +52,7 @@ func createImages(w http.ResponseWriter, r *http.Request) {
 		renderError(w, "INVALID_FILE_TYPE", http.StatusBadRequest)
 		return
 	}
-	fileName := randToken(12)
+	fileName := randToken(tokenLength)
 	fileEndings, err := mime.ExtensionsByType(fileType)
 	if err != nil {
 		renderError(w, "CANT_READ_FILE_TYPE", http.StatusInternalServerError)
@@ -89,7 +92,22 @@ func randToken(len int) string {
 
 func getImages(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
-	io.WriteString(w, "{}\n")
+	io.WriteString(w, "[\n")
+	files, err := ioutil.ReadDir(uploadPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	separator := ""
+	for _, f := range files {
+		io.WriteString(w, separator)
+		if separator == "" {
+			separator = ","
+		}
+		fileparts := strings.Split(f.Name(), ".")
+		io.WriteString(w, "{\"id\": \""+fileparts[0]+"\"}")
+		fmt.Println()
+	}
+	io.WriteString(w, "]\n")
 }
 
 func getImage(w http.ResponseWriter, r *http.Request) {
@@ -98,4 +116,8 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 	io.WriteString(w, "{\"id\": \""+id+"\"}\n")
+}
+
+func getImageFileName(id string) string {
+	return filepath.Join(uploadPath, id+".png")
 }
