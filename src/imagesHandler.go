@@ -19,7 +19,7 @@ const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 const uploadPath = "./tmp"
 const tokenLength = 12
 
-func createImages(w http.ResponseWriter, r *http.Request) {
+func createImagesHandler(w http.ResponseWriter, r *http.Request) {
 	// validate file size
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
@@ -90,7 +90,7 @@ func randToken(len int) string {
 	return fmt.Sprintf("%x", b)
 }
 
-func getImages(w http.ResponseWriter, r *http.Request) {
+func getImagesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	io.WriteString(w, "[\n")
 	files, err := ioutil.ReadDir(uploadPath)
@@ -110,7 +110,7 @@ func getImages(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "]\n")
 }
 
-func getImage(w http.ResponseWriter, r *http.Request) {
+func getImageHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 

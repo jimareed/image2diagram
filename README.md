@@ -1,18 +1,20 @@
 # image2diagram
-Hobby project to convert images into block diagrams that can be used by https://github.com/jimareed/block-diagram-editor .  Still under development, it currently will only find the first block in an image and doesn't support connectors.
+Hobby project which convert images into block diagrams that can be used by https://github.com/jimareed/block-diagram-editor .  Still under development, it currently will only find the first block in an image and doesn't support connectors.
 
 
 Start with an image which contains blocks
 <p  align="center">
-    <img src="./images/blocks-1.png" alt="Postman Request" width="50%" height="50%"/>
+    <kbd>
+        <img src="./images/blocks-1.png" alt="Postman Request" width="50%" height="50%"/>
+    </kbd>
 </p>
 
-Use postman to add the image: `post /images`
+Use postman to upload the image: `post /images`
 <p  align="center">
     <img src="./images/doc/postman-post-request.png" alt="Postman Request" width="80%" height="80%"/>
 </p>
 
-Convert it to a block diagram structure (for use by block-diagram-editor) by getting the diagram: `get /images/{id}/diagram`
+Then get the block diagram structure (for use by block-diagram-editor): `get /images/{id}/diagram`
 <p  align="center">
     <img src="./images/doc/postman-get-request.png" alt="Postman Request" width="80%" height="80%"/>
 </p>
