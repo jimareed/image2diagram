@@ -13,14 +13,29 @@ type Block struct {
 type Diagram struct {
 	width  int
 	height int
-	blocks []Block
+	shapes []Shape
+}
+
+func blackWhiteImage2Diagram(bwImage BlackWhiteImage) Diagram {
+
+	diagram := Diagram{}
+	diagram.width = bwImage.width
+	diagram.height = bwImage.height
+
+	diagram.shapes = blackWhiteImage2Shapes(bwImage)
+
+	return diagram
 }
 
 func diagram2String(diagram Diagram) string {
 
 	b := ""
-	if len(diagram.blocks) > 0 {
-		b = fmt.Sprintf("{\"x\": %d, \"y\": %d}", diagram.blocks[0].x, diagram.blocks[0].y)
+
+	for _, s := range diagram.shapes {
+		if len(b) > 0 {
+			b += ","
+		}
+		b += fmt.Sprintf("{\"x\": %d, \"y\": %d}", s.x, s.y)
 	}
 
 	s := fmt.Sprintf(

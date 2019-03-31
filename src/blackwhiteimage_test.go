@@ -4,37 +4,101 @@ import (
 	"testing"
 )
 
-func TestEmptyImage(t *testing.T) {
-	bwImage := BlackWhiteImage{}
-	bwImage.width = 300
-	bwImage.height = 200
+func TestGetRegion(t *testing.T) {
 
-	diagram := blackWhiteImage2Diagram(bwImage)
+	bwi := bwiTestOneBlock()
+	point := Point{2, 2}
 
-	if len(diagram.blocks) != 0 {
-		t.Log("Failed to convert an empty image")
+	region := getRegion(bwi, point)
+
+	if !(region.x1 == 2 && region.y1 == 2 && region.x2 == 4 && region.y2 == 4) {
+		t.Log("Failed to get region for single block")
 		t.Fail()
 	}
+
+	bwi = bwiTestTwoBlocks()
+
+	region = getRegion(bwi, point)
+
+	if !(region.x1 == 2 && region.y1 == 2 && region.x2 == 4 && region.y2 == 4) {
+		t.Log("Failed to get region for two blocks")
+		t.Fail()
+	}
+
 }
 
-func TestSingleBlock(t *testing.T) {
-	bwImage := BlackWhiteImage{}
-	bwImage.width = 300
-	bwImage.height = 200
+func TestClearRegion(t *testing.T) {
 
-	bwImage.points = append(bwImage.points, Point{2, 2})
-	bwImage.points = append(bwImage.points, Point{3, 2})
-	bwImage.points = append(bwImage.points, Point{4, 2})
-	bwImage.points = append(bwImage.points, Point{2, 3})
-	bwImage.points = append(bwImage.points, Point{4, 3})
-	bwImage.points = append(bwImage.points, Point{2, 4})
-	bwImage.points = append(bwImage.points, Point{3, 4})
-	bwImage.points = append(bwImage.points, Point{4, 4})
+	bwi := bwiTestOneBlock()
+	point := Point{2, 2}
 
-	diagram := blackWhiteImage2Diagram(bwImage)
+	region := getRegion(bwi, point)
 
-	if len(diagram.blocks) != 1 {
-		t.Log("Failed to convert a single block, invalid block count")
+	bwi = clearRegion(bwi, region)
+
+	if len(bwi.points) > 0 {
+		t.Log("Failed to clear region for single block")
 		t.Fail()
 	}
+
+	bwi = bwiTestTwoBlocks()
+	point = Point{2, 2}
+
+	region = getRegion(bwi, point)
+
+	bwi = clearRegion(bwi, region)
+
+	if len(bwi.points) == 0 {
+		t.Log("Failed to clear region for two blocks, cleared too much")
+		t.Fail()
+	}
+
+	if bwi.points[0].x != 12 && bwi.points[0].y != 12 {
+		t.Log("Failed to clear region for two blocks")
+		t.Fail()
+	}
+
+}
+
+func bwiTestOneBlock() BlackWhiteImage {
+	bwi := BlackWhiteImage{}
+	bwi.width = 300
+	bwi.height = 200
+
+	bwi.points = append(bwi.points, Point{2, 2})
+	bwi.points = append(bwi.points, Point{3, 2})
+	bwi.points = append(bwi.points, Point{4, 2})
+	bwi.points = append(bwi.points, Point{2, 3})
+	bwi.points = append(bwi.points, Point{4, 3})
+	bwi.points = append(bwi.points, Point{2, 4})
+	bwi.points = append(bwi.points, Point{3, 4})
+	bwi.points = append(bwi.points, Point{4, 4})
+
+	return bwi
+}
+
+func bwiTestTwoBlocks() BlackWhiteImage {
+	bwi := BlackWhiteImage{}
+	bwi.width = 300
+	bwi.height = 200
+
+	bwi.points = append(bwi.points, Point{2, 2})
+	bwi.points = append(bwi.points, Point{3, 2})
+	bwi.points = append(bwi.points, Point{4, 2})
+	bwi.points = append(bwi.points, Point{2, 3})
+	bwi.points = append(bwi.points, Point{4, 3})
+	bwi.points = append(bwi.points, Point{2, 4})
+	bwi.points = append(bwi.points, Point{3, 4})
+	bwi.points = append(bwi.points, Point{4, 4})
+
+	bwi.points = append(bwi.points, Point{12, 12})
+	bwi.points = append(bwi.points, Point{13, 12})
+	bwi.points = append(bwi.points, Point{14, 12})
+	bwi.points = append(bwi.points, Point{12, 13})
+	bwi.points = append(bwi.points, Point{14, 13})
+	bwi.points = append(bwi.points, Point{12, 14})
+	bwi.points = append(bwi.points, Point{13, 14})
+	bwi.points = append(bwi.points, Point{14, 14})
+
+	return bwi
 }

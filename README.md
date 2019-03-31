@@ -1,12 +1,10 @@
 # image2diagram
-Hobby project which convert images into block diagrams that can be used by https://github.com/jimareed/block-diagram-editor .  Still under development, it currently will only find the first block in an image and doesn't support connectors.
+Hobby project which convert images into block diagrams that can be used by https://github.com/jimareed/block-diagram-editor .  Still under development, it doesn't support connectors.
 
 
 Start with an image which contains blocks
 <p  align="center">
-    <kbd>
-        <img src="./images/blocks-1.png" alt="Postman Request" width="50%" height="50%"/>
-    </kbd>
+    <img src="./images/doc/example-block-diagram.png" alt="Postman Request" width="50%" height="50%"/>
 </p>
 
 Use postman to upload the image: `post /images`
@@ -25,10 +23,14 @@ docker build --tag image2diagram-image .
 docker run --name image2diagram -p 8080:8080 -d image2diagram-image
 ```
 
-
 clean up
 ```
 docker stop image2diagram
 docker rm image2diagram
 docker rmi image2diagram-image
+```
+
+run tests
+```
+go test ./src
 ```
