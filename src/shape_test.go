@@ -41,6 +41,12 @@ func TestOneShape(t *testing.T) {
 		t.Log("Failed to convert a single block bwImage to shapes, invalid coordinates")
 		t.Fail()
 	}
+
+	if shapes[0].width != 2 || shapes[0].height != 2 {
+		t.Log("Failed to convert a single block bwImage to shapes, invalid width and/or height")
+		t.Fail()
+	}
+
 }
 
 func TestTwoShapes(t *testing.T) {

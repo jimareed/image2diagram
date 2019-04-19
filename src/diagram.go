@@ -35,7 +35,7 @@ func diagram2String(diagram Diagram) string {
 		if len(b) > 0 {
 			b += ","
 		}
-		b += fmt.Sprintf("{\"x\": %d, \"y\": %d}", s.x, s.y)
+		b += fmt.Sprintf("{\"x\": %d, \"y\": %d, \"width\": %d, \"height\": %d}", s.x, s.y, s.width, s.height)
 	}
 
 	s := fmt.Sprintf(

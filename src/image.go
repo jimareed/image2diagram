@@ -16,7 +16,7 @@ func image2BlackWhiteImage(imageFileName string) BlackWhiteImage {
 
 	img, err := png.Decode(file)
 	if err != nil {
-		log.Fatal(os.Stderr, "%s: %v\n", imageFileName, err)
+		log.Fatal(err)
 	}
 
 	b := img.Bounds()

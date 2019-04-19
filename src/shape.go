@@ -10,7 +10,7 @@ const minDistanceBetweenShapes = 5
 
 // Shape contains the x,y coordinates of the start of the shape
 type Shape struct {
-	x, y   int
+	x, y, width, height   int
 	points []Point
 }
 
@@ -41,11 +41,19 @@ func findShapes(bwi BlackWhiteImage, shapes []Shape) []Shape {
 
 	newImage := BlackWhiteImage{}
 	i := len(shapes)
-	shapes = append(shapes, Shape{bwi.points[0].x, bwi.points[0].y, []Point{}})
+	shapes = append(shapes, Shape{bwi.points[0].x, bwi.points[0].y, 0, 0, []Point{}})
 
 	for _, p := range bwi.points {
 		if belongsToShape(shapes[i], p) {
 			shapes[i].points = append(shapes[i].points, p)
+			width := p.x - shapes[i].x
+			if (width > shapes[i].width) {
+				shapes[i].width = width
+			}
+			height := p.y - shapes[i].y
+			if (height > shapes[i].height) {
+				shapes[i].height = height
+			}
 		} else {
 			newImage.points = append(newImage.points, p)
 		}

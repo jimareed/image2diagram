@@ -15,7 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const maxUploadSize = 2 * 1024 * 1024 // 2 mb
+const maxUploadSize = 8 * 1024 * 1024 // 8 mb
 const uploadPath = "./tmp"
 const tokenLength = 12
 
