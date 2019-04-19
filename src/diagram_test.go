@@ -49,7 +49,7 @@ func TestTwoBlocks(t *testing.T) {
 	}
 
 	if !(diagram.shapes[0].x == 2 && diagram.shapes[0].y == 2 &&
-		diagram.shapes[1].x == 12 && diagram.shapes[1].y == 12) {
+		diagram.shapes[1].x == 42 && diagram.shapes[1].y == 12) {
 		t.Log("Failed to convert two blocks, invalid blocks")
 		t.Fail()
 	}

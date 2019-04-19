@@ -91,14 +91,14 @@ func bwiTestTwoBlocks() BlackWhiteImage {
 	bwi.points = append(bwi.points, Point{3, 4})
 	bwi.points = append(bwi.points, Point{4, 4})
 
-	bwi.points = append(bwi.points, Point{12, 12})
-	bwi.points = append(bwi.points, Point{13, 12})
-	bwi.points = append(bwi.points, Point{14, 12})
-	bwi.points = append(bwi.points, Point{12, 13})
-	bwi.points = append(bwi.points, Point{14, 13})
-	bwi.points = append(bwi.points, Point{12, 14})
-	bwi.points = append(bwi.points, Point{13, 14})
-	bwi.points = append(bwi.points, Point{14, 14})
+	bwi.points = append(bwi.points, Point{42, 12})
+	bwi.points = append(bwi.points, Point{43, 12})
+	bwi.points = append(bwi.points, Point{44, 12})
+	bwi.points = append(bwi.points, Point{42, 13})
+	bwi.points = append(bwi.points, Point{44, 13})
+	bwi.points = append(bwi.points, Point{42, 14})
+	bwi.points = append(bwi.points, Point{43, 14})
+	bwi.points = append(bwi.points, Point{44, 14})
 
 	return bwi
 }

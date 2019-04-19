@@ -6,7 +6,7 @@ import (
 )
 
 const maxShapes = 1000
-const minDistanceBetweenShapes = 5
+const minDistanceBetweenShapes = 20
 
 // Shape contains the x,y coordinates of the start of the shape
 type Shape struct {

@@ -59,7 +59,7 @@ func TestTwoShapes(t *testing.T) {
 		return
 	}
 
-	if shapes[0].x != 2 || shapes[0].y != 2 || shapes[1].x != 12 || shapes[1].y != 12 {
+	if shapes[0].x != 2 || shapes[0].y != 2 || shapes[1].x != 42 || shapes[1].y != 12 {
 		t.Log("Failed to convert a two block bwImage to shapes, invalid coordinates")
 		t.Fail()
 	}
