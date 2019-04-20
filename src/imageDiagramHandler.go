@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func getDiagramHandler(w http.ResponseWriter, r *http.Request) {
+func getImageDiagramHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
