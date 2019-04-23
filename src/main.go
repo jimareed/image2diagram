@@ -15,6 +15,7 @@ func main() {
 	r.HandleFunc("/images", getImagesHandler).Methods("GET")
 	r.HandleFunc("/diagrams", createDiagramsHandler).Methods("POST")
 	r.HandleFunc("/diagrams/{id}", getDiagramHandler).Methods("GET")
+	r.PathPrefix("/files/").Handler(http.StripPrefix("/files", http.FileServer(http.Dir("./tmp"))))
 
 	log.Print("Server started on localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
