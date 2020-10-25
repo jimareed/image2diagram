@@ -1,5 +1,5 @@
 # image2diagram
-Hobby project which convert images into block diagrams that can be used by https://github.com/jimareed/block-diagram-editor .  Still under development, it doesn't support connectors.
+Hobby project to learn Go. This project converts images into block diagrams that can be used by https://github.com/jimareed/block-diagram-editor .  Still under development, it doesn't support connectors.
 
 
 Start with an image which contains blocks
